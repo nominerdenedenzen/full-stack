@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const connectDB = async () => {
-  const connectionString =
-    "mongodb+srv://nomindenzen0601_db_user:MongoDb123@database.sd91ykz.mongodb.net/";
+  const mongoDB = process.env.MONGO_DB;
   try {
-    mongoose.connect(connectionString);
-    console.log("db connection success");
+    await mongoose.connect(mongoDB);
+    console.log("Database connected successfully connection success");
   } catch (error) {
-    console.error("db error");
+    console.error("Database connection error:", error.message);
+    throw error;
   }
 };
