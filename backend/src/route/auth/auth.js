@@ -1,16 +1,22 @@
 import { Router } from "express";
 import {
-  createBook,
-  deleteBook,
-  getBookName,
-  getBooks,
-  updateBook,
-} from "../../controller/book.js";
+  loginController,
+  signUpController,
+} from "../../controller/auth/auth.js";
 
-export const bookRouter = Router();
-bookRouter
-  .post("/", createBook)
-  .post("/", getBookName)
-  .get("/", getBooks)
-  .delete("/", deleteBook)
-  .put("/", updateBook);
+export const authRouter = Router();
+
+authRouter.post(
+  "/login",
+  validateEmailAndPassword,
+  checkIfUserExist,
+  loginController,
+);
+
+authRouter.post(
+  "/login",
+  validateEmailAndPassword,
+  loginController,
+  validateEmailAndPassword,
+);
+authRouter.post("/sign-up", validateEmailAndPassword, signUpController);
