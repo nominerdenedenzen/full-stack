@@ -16,6 +16,7 @@ connectDB();
 
 app.use("/auth", authRouter);
 app.use("/categories", categoriesRouter);
+
 app.post("/health", (req, res) => {
   res.status(200).json({ message: "API is HEALTH RUNNING" });
 });

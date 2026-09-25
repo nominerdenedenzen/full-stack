@@ -3,7 +3,7 @@ import { User } from "../../models/userSchema.js";
 import jwt from "jsonwebtoken";
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET || "nomin";
+const JWT_SECRET = process.env.JWT_SECRET || "nomin_secret";
 
 const publicUser = (user) => {
   return {
@@ -13,7 +13,7 @@ const publicUser = (user) => {
   };
 };
 
-const createToken = (user) => {
+export const createToken = (user) => {
   return jwt.sign(
     { email: user.email, role: user.role, id: user._id },
     JWT_SECRET,

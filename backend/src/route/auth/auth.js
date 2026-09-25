@@ -3,6 +3,13 @@ import {
   loginController,
   signUpController,
 } from "../../controller/auth/auth.js";
+import {
+  validateEmailAndPassword,
+  requireToken,
+  requireAdmin,
+  validateEmail,
+  checkIfUserExist,
+} from "../../middleware/auth-middleware.js";
 
 export const authRouter = Router();
 
@@ -12,11 +19,9 @@ authRouter.post(
   checkIfUserExist,
   loginController,
 );
-
 authRouter.post(
-  "/login",
+  "/sign-up",
   validateEmailAndPassword,
-  loginController,
-  validateEmailAndPassword,
+  validateEmail,
+  signUpController,
 );
-authRouter.post("/sign-up", validateEmailAndPassword, signUpController);
