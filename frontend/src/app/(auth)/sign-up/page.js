@@ -24,49 +24,48 @@ const Signup = () => {
   const [showPassword2, setShowPassword2] = useState(false);
 
   const handleInput = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
 
-    setFormValues({ ...formValues, [name]: value });
+    if (name === "email") setEmailError("");
+    if (name === "password") setPasswordError("");
+    if (name === "confirmPassword") setConfirmPasswordError("");
   };
 
   const validateEmail = (email) => {
-    if (formValues.email === "") {
+    if (!email) {
       setEmailError("Email is required");
       return true;
-    } else if (!formValues.email.includes("@")) {
-      setEmailError("Required valid email");
+    } else if (!email.includes("@")) {
+      setEmailError("Requires valid email");
       return true;
-    } else {
-      setEmailError("");
-      return false;
     }
+    setEmailError("");
+    return false;
   };
 
   const validatePasswordInput = (password) => {
-    if (password === "") {
+    if (!password) {
       setPasswordError("Password is required");
       return true;
     } else if (password.length < 8) {
       setPasswordError("Requires 8 characters");
       return true;
-    } else {
-      setPasswordError("");
-      return false;
     }
+    setPasswordError("");
+    return false;
   };
 
   const validateConfirmPasswordInput = (confirmPassword) => {
-    if (confirmPassword === "") {
+    if (!confirmPassword) {
       setConfirmPasswordError("Confirm Password is required");
       return true;
     } else if (formValues.password !== confirmPassword) {
       setConfirmPasswordError("Confirm password must match with password");
       return true;
-    } else {
-      setConfirmPasswordError("");
-      return false;
     }
+    setConfirmPasswordError("");
+    return false;
   };
 
   const handleSubmit = async () => {
@@ -89,7 +88,11 @@ const Signup = () => {
 
         router.push("/admin/dishes");
       } catch (err) {
-        console.log(err);
+        console.error("Signup request failed:", err);
+        alert(
+          err.response?.data?.message ||
+            "Unable to connect to server. Please ensure backend is running.",
+        );
       } finally {
         setIsSubmitting(false);
       }
@@ -114,9 +117,7 @@ const Signup = () => {
                   className="border border-gray-300 rounded-md py-1.5 px-2 placeholder:text-gray-400 text-gray-950 text-sm w-full"
                 />
                 {emailError && (
-                  <div style={{ color: "red", fontSize: "12px" }}>
-                    {emailError}
-                  </div>
+                  <div className="text-red-500 text-[12px]">{emailError}</div>
                 )}
               </div>
 
@@ -144,7 +145,7 @@ const Signup = () => {
                   </button>
                 </div>
                 {passwordError && (
-                  <div style={{ color: "red", fontSize: "12px" }}>
+                  <div className="text-red-500 text-[12px]">
                     {passwordError}
                   </div>
                 )}
@@ -174,7 +175,7 @@ const Signup = () => {
                   </button>
                 </div>
                 {confirmPasswordError && (
-                  <div style={{ color: "red", fontSize: "12px" }}>
+                  <div className="text-red-500 text-[12px]">
                     {confirmPasswordError}
                   </div>
                 )}
@@ -185,7 +186,7 @@ const Signup = () => {
                 onClick={handleSubmit}
                 className="px-1.5 py-2 bg-black text-white rounded-md mt-2 disabled:bg-gray-400"
               >
-                {isSubmitting ? "Submitting" : "Sign-Up"}
+                {isSubmitting ? "Submitting..." : "Sign-Up"}
               </button>
             </div>
 
@@ -204,6 +205,7 @@ const Signup = () => {
         <div className="flex-1 h-full rounded-2xl overflow-hidden">
           <img
             src="/front.png"
+            alt="Decoration banner"
             className="w-full h-full object-cover rounded-2xl"
           />
         </div>

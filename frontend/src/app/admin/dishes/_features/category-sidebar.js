@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { server } from "@/app/_api/api";
 
 export default function CategorySidebar() {
@@ -23,7 +21,7 @@ export default function CategorySidebar() {
   }, []);
 
   const handleAddCategory = async () => {
-    if (!newCategoryName) return;
+    if (!newCategoryName.trim()) return;
 
     try {
       const res = await server.post("/food-category", {
@@ -36,6 +34,15 @@ export default function CategorySidebar() {
     }
   };
 
+  const handleDeleteCategory = async (id) => {
+    try {
+      await server.delete("/food-category", { data: { id } });
+      setCategories(categories.filter((cat) => cat._id !== id));
+    } catch (err) {
+      console.error("Error deleting category:", err);
+    }
+  };
+
   return (
     <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-6 text-black w-full">
       <h2 className="font-bold text-lg text-gray-900">Categories</h2>
@@ -44,26 +51,18 @@ export default function CategorySidebar() {
         {categories.map((category) => (
           <div
             key={category._id}
-            className="p-3 border border-gray-200 rounded-xl bg-gray-50/50 flex flex-col gap-2"
+            className="p-3 border border-gray-200 rounded-xl bg-gray-50/50 flex items-center justify-between"
           >
             <span className="text-sm font-semibold text-gray-900">
               {category.name}
             </span>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs bg-white border-gray-300 text-gray-800"
-              >
-                Rename
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs bg-red-300 border-red-300 text-red-600"
+              <button
+                onClick={() => handleDeleteCategory(category._id)}
+                className="py-1 px-3 text-xs border rounded-md border-red-300 bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
               >
                 Delete
-              </Button>
+              </button>
             </div>
           </div>
         ))}
@@ -74,19 +73,19 @@ export default function CategorySidebar() {
           New category
         </label>
         <div className="flex gap-2">
-          <Input
+          <input
+            type="text"
             placeholder="Category name"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
-            className="h-9 text-sm bg-white border-gray-300 text-gray-900"
+            className="h-9 text-sm px-3 border border-gray-300 rounded-md bg-white text-gray-900 w-full focus:outline-none focus:ring-1 focus:ring-black"
           />
-          <Button
+          <button
             onClick={handleAddCategory}
-            size="sm"
-            className="h-9 px-4 bg-black text-white hover:bg-gray-800 font-medium shrink-0"
+            className="h-9 px-4 bg-black text-white hover:bg-gray-800 rounded-md text-sm font-medium shrink-0 transition-colors"
           >
             Add
-          </Button>
+          </button>
         </div>
       </div>
     </div>

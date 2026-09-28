@@ -1,19 +1,18 @@
 import express from "express";
-import {
-  getCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "../../controller/foodCategoryController.js";
+import { getFoods } from "../../controllers/food/get-foods.js";
+import { getFoodById } from "../../controllers/food/get-food-by-id.js";
+import { createFood } from "../../controllers/food/create-food.js";
+import { updateFood } from "../../controllers/food/update-food.js";
+import { deleteFood } from "../../controllers/food/delete-food.js";
+import { requireToken } from "../../middleware/require-token.js";
+import { requireAdmin } from "../../middleware/require-admin.js";
 
-import { requireToken } from "../../middleware/requireToken.js";
-import { requireAdmin } from "../../middleware/requireAdmin.js";
+const foodRouter = express.Router();
 
-const router = express.Router();
+foodRouter.get("/", getFoods);
+foodRouter.get("/:id", getFoodById);
+foodRouter.post("/", requireToken, requireAdmin, createFood);
+foodRouter.put("/:id", requireToken, requireAdmin, updateFood);
+foodRouter.delete("/:id", requireToken, requireAdmin, deleteFood);
 
-router.get("/", getCategories);
-router.post("/", requireToken, requireAdmin, createCategory);
-router.put("/", requireToken, requireAdmin, updateCategory);
-router.delete("/", requireToken, requireAdmin, deleteCategory);
-
-export default router;
+export default foodRouter;
