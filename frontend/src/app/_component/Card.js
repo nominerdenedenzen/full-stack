@@ -2,26 +2,29 @@ import { Plus } from "lucide-react";
 
 const Card = () => {
   return (
-    <div className="bg-white max-w-99.25 p-3 rounded-2xl">
+    <div className="bg-white max-w-sm w-full rounded-3xl p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
       <div className="flex flex-col">
-        <div className="relative mb-5">
+        <div className="relative aspect-4/3 mb-4 overflow-hidden rounded-2xl">
           <img
             src="/food.png"
             alt="Food item"
-            className="w-full rounded-xl max-h-52.5 object-cover"
+            className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
           />
-          <button className="absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition">
-            <Plus className="w-4 h-4 text-red-500" />
+          <button className="absolute bottom-3 right-3 bg-white rounded-full p-2.5 shadow-lg hover:bg-gray-50 transition-colors active:scale-95 duration-200">
+            <Plus className="w-5 h-5 text-red-500 stroke-[2.5]" />
           </button>
         </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center">
-            <h3 className="font-semibold text-[24px] text-[#EF4444]">
+
+        <div className="flex flex-col gap-1.5 px-0.5">
+          <div className="flex justify-between items-start gap-4">
+            <h3 className="font-bold text-[22px] leading-tight text-[#EF4444] tracking-tight">
               Sunshine Stackers
             </h3>
-            <h4 className="text-black font-semibold text-[18px]">$12.99</h4>
+            <h4 className="text-black font-bold text-[18px] leading-tight pt-0.5">
+              $12.99
+            </h4>
           </div>
-          <p className="font-normal text-[14px] text-black">
+          <p className="font-normal text-[14px] leading-relaxed text-gray-600">
             Fluffy pancakes stacked with fruits, cream, syrup, and powdered
             sugar.
           </p>

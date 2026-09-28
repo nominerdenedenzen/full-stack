@@ -4,6 +4,7 @@ import { useState } from "react";
 import { server } from "../../_api/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeClosed } from "lucide-react";
 
 const Signup = () => {
   const [formValues, setFormValues] = useState({
@@ -19,6 +20,8 @@ const Signup = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
 
   const handleInput = (e) => {
     const name = e.target.name;
@@ -84,11 +87,7 @@ const Signup = () => {
         localStorage.setItem("user", JSON.stringify(response.data.user));
         localStorage.setItem("token", response.data.token);
 
-        if (response.data.user.role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push("/");
-        }
+        router.push("/admin/dishes");
       } catch (err) {
         console.log(err);
       } finally {
@@ -100,7 +99,6 @@ const Signup = () => {
   return (
     <div className="min-h-screen text-black bg-white p-6 flex items-center justify-center">
       <div className="flex w-full max-w-[1000px] h-[80vh] items-center justify-between gap-10">
-        {/* Left Form Section */}
         <div className="p-6 border border-gray-300 shadow-md rounded-md w-[360px] shrink-0 flex flex-col gap-4">
           <div>
             <h2 className="font-semibold text-[16px] mb-3">Create account</h2>
@@ -124,14 +122,27 @@ const Signup = () => {
 
               <div className="flex flex-col gap-1">
                 <h3 className="font-semibold text-[14px]">Password</h3>
-                <input
-                  value={formValues.password}
-                  name="password"
-                  type="password"
-                  placeholder="Enter your password..."
-                  onChange={handleInput}
-                  className="border border-gray-300 rounded-md py-1.5 px-2 placeholder:text-gray-400 text-gray-950 text-sm w-full"
-                />
+                <div className="flex gap-2">
+                  <input
+                    value={formValues.password}
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password..."
+                    onChange={handleInput}
+                    className="border border-gray-300 rounded-md py-1.5 px-2 placeholder:text-gray-400 text-gray-950 text-sm w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="border border-gray-100 rounded-md py-1.5 px-2"
+                  >
+                    {showPassword ? (
+                      <EyeClosed className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
+                </div>
                 {passwordError && (
                   <div style={{ color: "red", fontSize: "12px" }}>
                     {passwordError}
@@ -141,14 +152,27 @@ const Signup = () => {
 
               <div className="flex flex-col gap-1">
                 <h3 className="font-semibold text-[14px]">Confirm Password</h3>
-                <input
-                  value={formValues.confirmPassword}
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Confirm your password..."
-                  onChange={handleInput}
-                  className="border border-gray-300 rounded-md py-1.5 px-2 placeholder:text-gray-400 text-gray-950 text-sm w-full"
-                />
+                <div className="flex gap-4">
+                  <input
+                    value={formValues.confirmPassword}
+                    name="confirmPassword"
+                    type={showPassword2 ? "text" : "password"}
+                    placeholder="Confirm your password..."
+                    onChange={handleInput}
+                    className="border border-gray-300 rounded-md py-1.5 px-2 placeholder:text-gray-400 text-gray-950 text-sm w-full"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword2(!showPassword2)}
+                    className="border border-gray-100 rounded-md py-1.5 px-2"
+                  >
+                    {showPassword2 ? (
+                      <EyeClosed className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </button>
+                </div>
                 {confirmPasswordError && (
                   <div style={{ color: "red", fontSize: "12px" }}>
                     {confirmPasswordError}

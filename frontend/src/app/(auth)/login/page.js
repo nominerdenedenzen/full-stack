@@ -61,11 +61,7 @@ const LogIn = () => {
         localStorage.setItem("user", JSON.stringify(response.data.user));
         localStorage.setItem("token", response.data.token);
 
-        if (response.data.user.role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push("/");
-        }
+        router.push("/admin/_dishes");
       } catch (err) {
         setEmailError(err.response?.data?.message || "Invalid credentials");
       }
@@ -75,7 +71,6 @@ const LogIn = () => {
   return (
     <div className="min-h-screen text-black bg-white p-6 flex items-center justify-center">
       <div className="flex w-full max-w-[1000px] h-[80vh] items-center justify-between gap-10">
-        {/* Left Login Form */}
         <div className="p-6 border border-gray-300 shadow-md rounded-md w-[360px] shrink-0 flex flex-col gap-4">
           <div className="flex flex-col gap-3">
             <h2 className="text-[16px] font-semibold">Log in</h2>
@@ -128,7 +123,7 @@ const LogIn = () => {
 
             <button
               onClick={handleSubmit}
-              className="px-1.5 py-2 bg-black text-white rounded-md mt-2"
+              className="px-1.5 py-2 bg-black text-white rounded-md mt-2 hover:bg-gray-800 transition"
             >
               Log in
             </button>
