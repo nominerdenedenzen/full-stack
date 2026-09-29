@@ -1,12 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./connectDB.js";
 
-import authRouter from "./router/auth/auth.js";
-import foodCategoryRouter from "./router/food-category/food-category-router.js";
-import foodRouter from "./router/food/food-router.js";
-import orderRouter from "./router/order/order-router.js";
+import { connectDB } from "./src/database/db.js";
+import { authRouter } from "./src/route/auth/auth.js";
+import { categoriesRouter } from "./src/route/categories/categories.js";
+import foodRouter from "./src/route/food/food-router.js";
 
 dotenv.config();
 
@@ -19,9 +18,8 @@ app.use(express.json());
 connectDB();
 
 app.use("/auth", authRouter);
-app.use("/food-category", foodCategoryRouter);
+app.use("/food-category", categoriesRouter);
 app.use("/food", foodRouter);
-app.use("/order", orderRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

@@ -27,6 +27,6 @@ export const createFood = async (req, res) => {
     const populatedFood = await newFood.populate("category");
     return res.status(201).json(populatedFood);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    return res.status(200).json({ message: err.message });
   }
 };

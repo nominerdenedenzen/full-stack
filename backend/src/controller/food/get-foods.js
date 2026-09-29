@@ -1,4 +1,4 @@
-import { FoodModel } from "../../models/food";
+import { FoodModel } from "../../models/food.js";
 
 export const getFoods = async (req, res) => {
   try {
