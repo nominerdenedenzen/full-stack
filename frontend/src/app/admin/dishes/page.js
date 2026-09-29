@@ -1,20 +1,20 @@
 "use client";
 
-import CategorySideBar from "./_features/category-sidebar";
+import { useState } from "react";
+import CategorySidebar from "./_features/category-sidebar";
 import DishGrid from "./_features/dish-grid";
 
-const DishesPage = () => {
-  return (
-    <div className="flex flex-col md:flex-row gap-6">
-      <div className="w-full md:w-80 shrink-0">
-        <CategorySideBar />
-      </div>
+export default function DishesPage() {
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
 
-      <div className="flex-1">
-        <DishGrid />
-      </div>
+  return (
+    <div className="flex flex-col gap-6 p-6">
+      <CategorySidebar
+        selectedCategoryId={selectedCategoryId}
+        onSelectCategory={setSelectedCategoryId}
+      />
+
+      <DishGrid selectedCategoryId={selectedCategoryId} />
     </div>
   );
-};
-
-export default DishesPage;
+}

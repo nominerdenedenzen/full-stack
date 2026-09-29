@@ -7,6 +7,8 @@ import Dishcard from "../_components/dish-card";
 
 export default function DishGrid() {
   const [foods, setFoods] = useState([]);
+  const [categoryId, setCategoryId] = useState();
+  const [filteredDishes, setFilteredDishes] = useState([]);
 
   const fetchFoods = async () => {
     try {
@@ -24,6 +26,8 @@ export default function DishGrid() {
   const handleDishAdded = (newDish) => {
     setFoods((prev) => [...prev, newDish]);
   };
+
+  const filterDishesByCategory = () => {};
 
   return (
     <div className="bg-white p-6 rounded-xl border flex flex-col gap-6">

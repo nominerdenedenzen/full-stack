@@ -2,16 +2,31 @@
 
 import { useState, useEffect } from "react";
 import { server } from "@/app/_api/api";
+import { Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-export default function CategorySidebar() {
+export default function CategorySidebar({
+  selectedCategoryId,
+  onSelectCategory,
+}) {
   const [categories, setCategories] = useState([]);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [categoryError, setCategoryError] = useState("");
+  const [openAdd, setOpenAdd] = useState(false);
+
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [renameInput, setRenameInput] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
 
   const fetchCategories = async () => {
     try {
       const res = await server.get("/food-category");
-      console.log("CATEGORIES", res.data);
       setCategories(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -30,101 +45,196 @@ export default function CategorySidebar() {
     }
 
     try {
-      const res = await server.post("/food-category", {
+      await server.post("/food-category", {
         name: newCategoryName.trim(),
       });
-      setCategories((prev) => [...prev, res.data]);
       setNewCategoryName("");
+      setOpenAdd(false);
+      fetchCategories();
     } catch (err) {
       console.error("Error adding category:", err);
-      setCategoryError("Failed to add category");
+      if (err.response?.status === 409) {
+        setCategoryError("This category already exists");
+      } else {
+        setCategoryError("Failed to add category");
+      }
     }
   };
 
   const handleDeleteCategory = async (id) => {
     try {
-      await server.delete("/food-category", { data: { id } });
-      setCategories((prev) => prev.filter((cat) => cat._id !== id));
+      await server.delete("/food-category", {
+        data: { id },
+      });
+
+      setCategories((prevCategories) =>
+        prevCategories.filter((category) => category._id !== id),
+      );
+
+      setOpenEdit(false);
+      if (selectedCategoryId === id) {
+        onSelectCategory("");
+      }
     } catch (err) {
       console.error("Error deleting category:", err);
     }
   };
 
-  const handleRenameCategory = async (id, newName) => {
-    if (!newName) return;
+  const handleSaveRename = async (id) => {
+    if (!renameInput.trim()) return;
 
     try {
-      const res = await server.put("/food-category", {
-        id,
-        name: newName.trim(),
+      await server.put("/food-category", {
+        id: id,
+        name: renameInput.trim(),
       });
-      setCategories((prev) =>
-        prev.map((cat) =>
-          cat._id === id ? { ...cat, name: newName.trim() } : cat,
-        ),
+
+      setCategories((prevCategories) =>
+        prevCategories.map((category) => {
+          if (category._id === id) {
+            return { ...category, name: renameInput.trim() };
+          }
+          return category;
+        }),
       );
+
+      setOpenEdit(false);
     } catch (err) {
-      console.error("Error renaming category:", err);
+      console.error("Error updating category:", err);
     }
   };
 
-  return (
-    <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex flex-col gap-6 text-black w-full">
-      <h2 className="font-bold text-lg text-gray-900">Dishes Categories</h2>
+  const handleCategoryClick = (category) => {
+    onSelectCategory(category._id);
+    setEditingCategory(category);
+    setRenameInput(category.name);
+    setOpenEdit(true);
+  };
 
-      <div className="flex flex-col gap-3">
-        {categories.map((category) => (
-          <div
+  return (
+    <div className="bg-white rounded-xl p-4 flex flex-wrap items-center gap-3 border border-gray-100 shadow-sm">
+      <h2 className="font-bold text-lg text-gray-900 mr-2">
+        Dishes Categories
+      </h2>
+
+      {/* "All Dishes" Button */}
+      <button
+        onClick={() => onSelectCategory("")}
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+          selectedCategoryId === ""
+            ? "bg-black text-white"
+            : "border border-gray-300 text-gray-700 hover:border-black"
+        }`}
+      >
+        All Dishes
+      </button>
+
+      {categories.map((category) => {
+        const isSelected = selectedCategoryId === category._id;
+        return (
+          <button
             key={category._id}
-            className="p-3 border border-gray-200 rounded-xl bg-gray-50/50 flex items-center justify-between"
+            onClick={() => handleCategoryClick(category)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              isSelected
+                ? "bg-black text-white"
+                : "border border-gray-300 text-gray-700 hover:border-black"
+            }`}
           >
-            <span className="text-sm font-semibold text-gray-900">
-              {category.name}
-            </span>
-            <div className="flex items-center gap-2">
+            <span>{category.name}</span>
+          </button>
+        );
+      })}
+
+      {/* Category Edit / Delete / Save Dialog */}
+      <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+        <DialogContent className="sm:max-w-[360px]">
+          <DialogHeader>
+            <DialogTitle>Edit category</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-4 mt-2">
+            <input
+              type="text"
+              value={renameInput}
+              onChange={(e) => setRenameInput(e.target.value)}
+              className="h-10 text-sm px-3 border border-gray-300 rounded-lg outline-none focus:border-black"
+            />
+
+            <div className="flex gap-2 justify-end">
               <button
-                onClick={() => handleDeleteCategory(category._id)}
-                className="py-1 px-3 text-xs border rounded-md border-red-300 bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                type="button"
+                onClick={() => handleDeleteCategory(editingCategory?._id)}
+                className="px-3 py-2 bg-red-100 text-red-600 font-medium rounded-lg text-sm hover:bg-red-200"
               >
                 Delete
               </button>
-
               <button
-                onClick={handleRenameCategory}
-                className="py-1 px-3 text-xs border rounded-md border-zinc-800 text-zinc-800 hover:bg-zinc-100 transition-colors"
+                type="button"
+                onClick={() => handleSaveRename(editingCategory?._id)}
+                className="px-3 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg text-sm hover:bg-gray-200"
               >
                 Rename
               </button>
+              <button
+                type="button"
+                onClick={() => handleSaveRename(editingCategory?._id)}
+                className="px-4 py-2 bg-black text-white font-medium rounded-lg text-sm hover:bg-zinc-800"
+              >
+                Save
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </DialogContent>
+      </Dialog>
 
-      <div className="flex flex-col gap-2 pt-2 border-t border-gray-200">
-        <label className="text-xs font-semibold text-gray-700">
-          New category
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Category name"
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            className="h-9 text-sm px-3 border border-gray-300 rounded-md bg-white text-gray-900 w-full focus:outline-none focus:ring-1 focus:ring-black"
-          />
-          <button
-            type="button"
-            onClick={handleAddCategory}
-            className="h-9 px-4 bg-black text-white hover:bg-gray-800 rounded-md text-sm font-medium shrink-0 transition-colors"
-          >
-            Add
+      {/* Add Category Dialog */}
+      <Dialog open={openAdd} onOpenChange={setOpenAdd}>
+        <DialogTrigger asChild>
+          <button className="bg-red-600 hover:bg-red-700 text-white font-semibold p-2 rounded-full flex items-center justify-center shrink-0 transition-colors">
+            <Plus className="w-5 h-5" />
           </button>
-        </div>
+        </DialogTrigger>
 
-        {categoryError && (
-          <p className="text-red-500 text-xs mt-1">{categoryError}</p>
-        )}
-      </div>
+        <DialogContent className="sm:max-w-[350px]">
+          <DialogHeader>
+            <DialogTitle>Add Category</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-3 mt-2">
+            <input
+              type="text"
+              placeholder="Category name"
+              value={newCategoryName}
+              onChange={(e) => {
+                setNewCategoryName(e.target.value);
+                setCategoryError("");
+              }}
+              className="h-10 text-sm px-3 border border-gray-300 rounded-lg outline-none focus:border-black"
+            />
+            {categoryError && (
+              <p className="text-red-500 text-xs">{categoryError}</p>
+            )}
+
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => setOpenAdd(false)}
+                className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleAddCategory}
+                className="px-4 py-2 bg-black text-white rounded-lg text-sm hover:bg-zinc-800"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema(
+const foodCategorySchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, "Category name is required"],
       trim: true,
     },
   },
@@ -13,4 +12,4 @@ const categorySchema = new mongoose.Schema(
 );
 
 export const CategoryModel =
-  mongoose.models.Category || mongoose.model("Category", categorySchema);
+  mongoose.models.Category || mongoose.model("Category", foodCategorySchema);

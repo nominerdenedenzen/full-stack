@@ -11,11 +11,14 @@ import {
 } from "@/components/ui/dialog";
 import { PlusIcon } from "lucide-react";
 
-export default function DishGridDialog({ onDishAdded }) {
+export default function DishGridDialog({
+  onDishAdded,
+  selectedCategoryId = "",
+}) {
   const [open, setOpen] = useState(false);
 
   const [categories, setCategories] = useState([]);
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState(selectedCategoryId);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -29,7 +32,6 @@ export default function DishGridDialog({ onDishAdded }) {
   const fetchCategories = async () => {
     try {
       const res = await server.get("/food-category");
-      console.log("CATEGORIES", res.data);
       setCategories(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -37,8 +39,13 @@ export default function DishGridDialog({ onDishAdded }) {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (open) {
+      fetchCategories();
+      if (selectedCategoryId) {
+        setCategoryId(selectedCategoryId);
+      }
+    }
+  }, [open, selectedCategoryId]);
 
   const handleSave = async () => {
     setNameError("");
