@@ -8,14 +8,14 @@ const JWT_SECRET = process.env.JWT_SECRET || "nomin_secret";
 const publicUser = (user) => {
   return {
     email: user.email,
-    role: user.role,
+    role: user.role || "admin",
     _id: user._id,
   };
 };
 
 export const createToken = (user) => {
   return jwt.sign(
-    { email: user.email, role: user.role, id: user._id },
+    { email: user.email, role: user.role || "admin", id: user._id },
     JWT_SECRET,
     { expiresIn: "7d" },
   );
@@ -61,7 +61,7 @@ export const signUpController = async (req, res) => {
       email,
       password: hashedPassword,
       phoneNumber,
-      role,
+      role: role || "admin", //
     });
 
     const token = createToken(user);

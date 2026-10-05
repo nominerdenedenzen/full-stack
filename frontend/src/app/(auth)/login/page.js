@@ -61,7 +61,7 @@ const LogIn = () => {
         localStorage.setItem("user", JSON.stringify(response.data.user));
         localStorage.setItem("token", response.data.token);
 
-        router.push("/admin/_dishes");
+        router.push("/admin/dishes");
       } catch (err) {
         setEmailError(err.response?.data?.message || "Invalid credentials");
       }

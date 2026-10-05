@@ -117,7 +117,6 @@ export default function CategorySidebar({
         Dishes Categories
       </h2>
 
-      {/* "All Dishes" Button */}
       <button
         onClick={() => onSelectCategory("")}
         className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
@@ -146,53 +145,14 @@ export default function CategorySidebar({
         );
       })}
 
-      {/* Category Edit / Delete / Save Dialog */}
-      <Dialog open={openEdit} onOpenChange={setOpenEdit}>
-        <DialogContent className="sm:max-w-[360px]">
-          <DialogHeader>
-            <DialogTitle>Edit category</DialogTitle>
-          </DialogHeader>
-
-          <div className="flex flex-col gap-4 mt-2">
-            <input
-              type="text"
-              value={renameInput}
-              onChange={(e) => setRenameInput(e.target.value)}
-              className="h-10 text-sm px-3 border border-gray-300 rounded-lg outline-none focus:border-black"
-            />
-
-            <div className="flex gap-2 justify-end">
-              <button
-                type="button"
-                onClick={() => handleDeleteCategory(editingCategory?._id)}
-                className="px-3 py-2 bg-red-100 text-red-600 font-medium rounded-lg text-sm hover:bg-red-200"
-              >
-                Delete
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSaveRename(editingCategory?._id)}
-                className="px-3 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg text-sm hover:bg-gray-200"
-              >
-                Rename
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSaveRename(editingCategory?._id)}
-                className="px-4 py-2 bg-black text-white font-medium rounded-lg text-sm hover:bg-zinc-800"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Category Dialog */}
       <Dialog open={openAdd} onOpenChange={setOpenAdd}>
         <DialogTrigger asChild>
-          <button className="bg-red-600 hover:bg-red-700 text-white font-semibold p-2 rounded-full flex items-center justify-center shrink-0 transition-colors">
-            <Plus className="w-5 h-5" />
+          <button
+            type="button"
+            onClick={() => setOpenAdd(true)}
+            className="bg-red-600 hover:bg-red-700 text-white font-semibold p-2 rounded-full flex items-center justify-center"
+          >
+            <Plus className="w-5 h-5 pointer-events-none" />
           </button>
         </DialogTrigger>
 

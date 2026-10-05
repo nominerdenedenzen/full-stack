@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import { AuthProvider } from "@/providers/auth-provider";
 import { CategoryProvider } from "@/providers/category-provider";
 import { DishProvider } from "@/providers/dish-provider";
